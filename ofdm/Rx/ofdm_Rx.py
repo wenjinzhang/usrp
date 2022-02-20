@@ -65,8 +65,8 @@ class ofdm_Rx(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.usrp_freq = usrp_freq = 5e9
-        self.samp_rate = samp_rate = 1e6
-        self.packet_len = packet_len = 20
+        self.samp_rate = samp_rate = 2e6
+        self.packet_len = packet_len = 50
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_offset = freq_offset = 0
         self.fft_len = fft_len = 32
