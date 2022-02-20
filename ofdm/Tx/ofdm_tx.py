@@ -67,7 +67,7 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.packet_len = packet_len = 20
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_usrp = freq_usrp = 5e9
-        self.fft_len = fft_len = 32
+        self.fft_len = fft_len = 16
 
         ##################################################
         # Blocks
@@ -177,8 +177,8 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.digital_ofdm_tx_0 = digital.ofdm_tx(
         	  fft_len=fft_len, cp_len=fft_len/4,
         	  packet_length_tag_key=len_tag_key,
-        	  occupied_carriers=((-4,-3,-2,-1,1,2,3,4,),),
-        	  pilot_carriers=((-6,-5,5,6),),
+        	  occupied_carriers=((-8,-6,-3,-1,1,3,6, 8),),
+        	  pilot_carriers=((-11,-5,5,11),),
         	  pilot_symbols=((-1,1,-1,1),),
         	  bps_header=1,
         	  bps_payload=2,
