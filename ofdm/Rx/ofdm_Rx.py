@@ -69,7 +69,7 @@ class ofdm_Rx(gr.top_block, Qt.QWidget):
         self.packet_len = packet_len = 20
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_offset = freq_offset = 0
-        self.fft_len = fft_len = 64
+        self.fft_len = fft_len = 32
 
         ##################################################
         # Blocks

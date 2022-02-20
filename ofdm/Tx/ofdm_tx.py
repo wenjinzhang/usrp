@@ -63,11 +63,11 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 10e6
-        self.packet_len = packet_len = 80
+        self.samp_rate = samp_rate = 1e6
+        self.packet_len = packet_len = 20
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_usrp = freq_usrp = 5e9
-        self.fft_len = fft_len = 64
+        self.fft_len = fft_len = 32
 
         ##################################################
         # Blocks
@@ -83,7 +83,6 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_center_freq(freq_usrp, 0)
         self.uhd_usrp_sink_0.set_normalized_gain(0.95, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(20e6, 0)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
         	samp_rate, #samp_rate
@@ -178,8 +177,8 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.digital_ofdm_tx_0 = digital.ofdm_tx(
         	  fft_len=fft_len, cp_len=fft_len/4,
         	  packet_length_tag_key=len_tag_key,
-        	  occupied_carriers=((-26,-25, -24, -23, -22, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11,-10, -9, -8, -6, -5, -4, -3, -2, -1,1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,26),),
-        	  pilot_carriers=((-21, -7, 7, 21),),
+        	  occupied_carriers=((-4,-3,-2,-1,1,2,3,4,),),
+        	  pilot_carriers=((-6,-5,5,6),),
         	  pilot_symbols=((-1,1,-1,1),),
         	  bps_header=1,
         	  bps_payload=2,
@@ -190,20 +189,18 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.blocks_vector_source_x_0 = blocks.vector_source_b(range(packet_len), True, 1, ())
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, len_tag_key)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((0.6, ))
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_ofdm_tx_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_uchar_to_float_0, 0))
-        self.connect((self.digital_ofdm_tx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.digital_ofdm_tx_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.digital_ofdm_tx_0, 0), (self.uhd_usrp_sink_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "ofdm_tx")
