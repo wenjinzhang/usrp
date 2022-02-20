@@ -63,7 +63,7 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 20e6
+        self.samp_rate = samp_rate = 10e6
         self.packet_len = packet_len = 80
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_usrp = freq_usrp = 5e9
