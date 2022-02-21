@@ -42,11 +42,12 @@ def main(top_block_cls=ofdm_tx_attack, options=None, gains=[0.7, 0.8, 0.9, 1]):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
+    tb = top_block_cls(0)
+    
     while True:
-        print(time.time()-start_time)
-        if time.time()-start_time >= 10:
-            time.sleep(1)
+        if time.time()-start_time >= 40:
             break
+        time.sleep(1)
     
     for gain in gains:
         print("start attack, gain is", gain, 'time:', time.time()-start_time)
