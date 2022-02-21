@@ -33,9 +33,9 @@ import time
 from gnuradio import qtgui
 
 
-class ofdm_tx(gr.top_block, Qt.QWidget):
+class ofdm_tx_attack(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
+    def __init__(self, setgain=0.95):
         gr.top_block.__init__(self, "OFDM Tx")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("OFDM Tx")
@@ -56,18 +56,19 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "ofdm_tx")
+        self.settings = Qt.QSettings("GNU Radio", "ofdm_tx_attack")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 2e6
-        self.packet_len = packet_len = 50
+        self.samp_rate = samp_rate = 1e6
+        self.packet_len = packet_len = 80
         self.len_tag_key = len_tag_key = "packet_len"
+        self.gain = gain = setgain
         self.freq_usrp = freq_usrp = 5e9
-        self.fft_len = fft_len = 32
+        self.fft_len = fft_len = 64
 
         ##################################################
         # Blocks
@@ -81,9 +82,9 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         )
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_center_freq(freq_usrp, 0)
-        self.uhd_usrp_sink_0.set_normalized_gain(0.95, 0)
+        self.uhd_usrp_sink_0.set_normalized_gain(gain, 0)
+        print("current gain is----->", gain)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(20e6, 0)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
         	samp_rate, #samp_rate
@@ -178,8 +179,8 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.digital_ofdm_tx_0 = digital.ofdm_tx(
         	  fft_len=fft_len, cp_len=fft_len/4,
         	  packet_length_tag_key=len_tag_key,
-        	  occupied_carriers=((-8,-6,-3,-1,1,3,6, 8),),
-        	  pilot_carriers=((-11,-5,5,11),),
+        	  occupied_carriers=((-26,-25,-24,-23,-22,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,26),),
+        	  pilot_carriers=((-21,-7,7,21),),
         	  pilot_symbols=((-1,1,-1,1),),
         	  bps_header=1,
         	  bps_payload=2,
@@ -190,23 +191,26 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.blocks_vector_source_x_0 = blocks.vector_source_b(range(packet_len), True, 1, ())
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, len_tag_key)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((10, ))
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_ofdm_tx_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_uchar_to_float_0, 0))
-        self.connect((self.digital_ofdm_tx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.digital_ofdm_tx_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.digital_ofdm_tx_0, 0), (self.uhd_usrp_sink_0, 0))
+
+        # close window timer
+        self.timer = Qt.QTimer(self)
+        self.timer.timeout.connect(self.close)
+        self.timer.start(1000*30)
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "ofdm_tx")
+        self.settings = Qt.QSettings("GNU Radio", "ofdm_tx_attack")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -235,6 +239,14 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
     def set_len_tag_key(self, len_tag_key):
         self.len_tag_key = len_tag_key
 
+    def get_gain(self):
+        return self.gain
+
+    # def set_gain(self, gain):
+        self.gain = gain
+        self.uhd_usrp_sink_0.set_normalized_gain(self.gain, 0)
+
+
     def get_freq_usrp(self):
         return self.freq_usrp
 
@@ -249,7 +261,7 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         self.fft_len = fft_len
 
 
-def main(top_block_cls=ofdm_tx, options=None):
+def main(top_block_cls=ofdm_tx_attack, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
