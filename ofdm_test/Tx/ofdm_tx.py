@@ -63,11 +63,11 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 2e6
+        self.samp_rate = samp_rate = 4e6
         self.packet_len = packet_len = 50
         self.len_tag_key = len_tag_key = "packet_len"
         self.freq_usrp = freq_usrp = 5e9
-        self.fft_len = fft_len = 32
+        self.fft_len = fft_len = 64
 
         ##################################################
         # Blocks
@@ -180,7 +180,7 @@ class ofdm_tx(gr.top_block, Qt.QWidget):
         	  packet_length_tag_key=len_tag_key,
         	  occupied_carriers=((-8,-6,-3,-1,1,3,6, 8),),
         	  pilot_carriers=((-11,-5,5,11),),
-        	  pilot_symbols=((-1,1,-1,1),),
+        	  pilot_symbols=((-1+0.1j,1+0.1j,-1+0.1j,1+0.1j),),
         	  bps_header=1,
         	  bps_payload=2,
         	  rolloff=0,

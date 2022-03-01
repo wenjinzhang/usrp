@@ -113,7 +113,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>32</value>
+      <value>64</value>
     </param>
   </block>
   <block>
@@ -284,7 +284,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2e6</value>
+      <value>4e6</value>
     </param>
   </block>
   <block>
@@ -563,7 +563,7 @@
     </param>
     <param>
       <key>pilot_symbols</key>
-      <value>((-1,1,-1,1),)</value>
+      <value>((-1+0.1j,1+0.1j,-1+0.1j,1+0.1j),)</value>
     </param>
     <param>
       <key>rolloff</key>
