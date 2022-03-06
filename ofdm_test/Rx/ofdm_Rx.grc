@@ -113,7 +113,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>32</value>
+      <value>64</value>
     </param>
   </block>
   <block>
@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -257,7 +257,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2e6</value>
+      <value>20e6</value>
     </param>
   </block>
   <block>
@@ -303,7 +303,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -346,7 +346,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>fft_len</key>
@@ -398,7 +398,7 @@
     </param>
     <param>
       <key>pilot_symbols</key>
-      <value>((-1, 1, -1, 1), )</value>
+      <value>((-1+0.1j,1+0.1j,-1+0.1j,1+0.1j),)</value>
     </param>
     <param>
       <key>scramble_bits</key>
@@ -740,11 +740,11 @@
     </param>
     <param>
       <key>entags</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>

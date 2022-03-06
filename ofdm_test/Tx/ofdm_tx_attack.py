@@ -191,7 +191,6 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         	 )
         self.blocks_vector_source_x_0 = blocks.vector_source_b(range(packet_len), True, 1, ())
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, 5e6,True)
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, len_tag_key)
         self.band_pass_filter_0 = filter.fir_filter_ccf(1, firdes.band_pass(
         	1, 20e6, 1, 1e6, 1e6, firdes.WIN_KAISER, 6.76))
@@ -204,10 +203,9 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.band_pass_filter_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_ofdm_tx_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_uchar_to_float_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_uchar_to_float_0, 0))
         self.connect((self.digital_ofdm_tx_0, 0), (self.band_pass_filter_0, 0))
 
     def closeEvent(self, event):
