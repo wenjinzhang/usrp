@@ -188,7 +188,11 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         	  debug_log=False,
         	  scramble_bits=False
         	 )
-        self.blocks_vector_source_x_0 = blocks.vector_source_b(range(packet_len), True, 1, ())
+        # message "rectangle" [x/125 * 250 for x in range(packet_len)]
+        # message "triangle" range(packet_len)
+        # random message [random.random() for x in range(packet_len)]
+        
+        self.blocks_vector_source_x_0 = blocks.vector_source_b([x/125 * 250 for x in range(packet_len)], True, 1, ())
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, len_tag_key)
 

@@ -21,6 +21,7 @@ from PyQt4 import Qt
 from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import eng_notation
+from gnuradio import filter
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio import uhd
@@ -35,7 +36,7 @@ from gnuradio import qtgui
 
 class ofdm_tx_attack(gr.top_block, Qt.QWidget):
 
-    def __init__(self, setgain=0.95):
+    def __init__(self):
         gr.top_block.__init__(self, "OFDM Tx")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("OFDM Tx")
@@ -63,10 +64,11 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 2e6
+        self.samp_rate_disp = samp_rate_disp = 1e6
+        self.samp_rate = samp_rate = 20e6
         self.packet_len = packet_len = 250
         self.len_tag_key = len_tag_key = "packet_len"
-        self.gain = gain = setgain
+        self.gain = gain = 0.95
         self.freq_usrp = freq_usrp = 5e9
         self.fft_len = fft_len = 64
 
@@ -83,7 +85,6 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_center_freq(freq_usrp, 0)
         self.uhd_usrp_sink_0.set_normalized_gain(gain, 0)
-        print("current gain is----->", gain, "bandwidth is", samp_rate)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
@@ -190,29 +191,35 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
         	 )
         self.blocks_vector_source_x_0 = blocks.vector_source_b(range(packet_len), True, 1, ())
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, 5e6,True)
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, packet_len, len_tag_key)
+        self.band_pass_filter_0 = filter.fir_filter_ccf(1, firdes.band_pass(
+        	1, 20e6, 1, 1e6, 1e6, firdes.WIN_KAISER, 6.76))
 
 
 
         ##################################################
         # Connections
         ##################################################
+        self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.band_pass_filter_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.digital_ofdm_tx_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_uchar_to_float_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_uchar_to_float_0, 0))
-        self.connect((self.digital_ofdm_tx_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.digital_ofdm_tx_0, 0), (self.uhd_usrp_sink_0, 0))
-
-        # close window timer
-        self.timer = Qt.QTimer(self)
-        self.timer.timeout.connect(self.close)
-        self.timer.start(1000*(30-0.8))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.digital_ofdm_tx_0, 0), (self.band_pass_filter_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "ofdm_tx_attack")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_samp_rate_disp(self):
+        return self.samp_rate_disp
+
+    def set_samp_rate_disp(self, samp_rate_disp):
+        self.samp_rate_disp = samp_rate_disp
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -242,7 +249,7 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
     def get_gain(self):
         return self.gain
 
-    # def set_gain(self, gain):
+    def set_gain(self, gain):
         self.gain = gain
         self.uhd_usrp_sink_0.set_normalized_gain(self.gain, 0)
 
