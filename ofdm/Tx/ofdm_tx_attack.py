@@ -246,7 +246,7 @@ class ofdm_tx_attack(gr.top_block, Qt.QWidget):
     def get_gain(self):
         return self.gain
 
-    # def set_gain(self, gain):
+    def set_gain(self, gain):
         self.gain = gain
         self.uhd_usrp_sink_0.set_normalized_gain(self.gain, 0)
 

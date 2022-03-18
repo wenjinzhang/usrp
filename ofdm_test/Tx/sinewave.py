@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Top Block
+# Title: Sinewave
 # GNU Radio version: 3.7.14.0
 ##################################################
 
@@ -32,12 +32,12 @@ import time
 from gnuradio import qtgui
 
 
-class top_block(gr.top_block, Qt.QWidget):
+class sinewave(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
-        gr.top_block.__init__(self, "Top Block")
+    def __init__(self, setgain=0.95):
+        gr.top_block.__init__(self, "Sinewave")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Top Block")
+        self.setWindowTitle("Sinewave")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -55,7 +55,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
+        self.settings = Qt.QSettings("GNU Radio", "sinewave")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -63,8 +63,9 @@ class top_block(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 20e6
-        self.gain = gain = 0.95
+        self.gain = gain = setgain
         self.freq_usrp = freq_usrp = 5e9
+        self.freq = freq = 312500*21
 
         ##################################################
         # Blocks
@@ -79,6 +80,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_center_freq(freq_usrp, 0)
         self.uhd_usrp_sink_0.set_normalized_gain(gain, 0)
+        print("current gain is----->", gain, "bandwidth is", samp_rate)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
         	1024, #size
@@ -125,7 +127,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.band_pass_filter_0 = filter.fir_filter_ccf(1, firdes.band_pass(
         	1, 20e6, 0.5e6, 1.5e6, 1e6, firdes.WIN_KAISER, 6.76))
-        self.analog_sig_source_x_0 = analog.sig_source_c(20e6, analog.GR_SIN_WAVE, 1e6, 1, 0)
+        self.analog_sig_source_x_0 = analog.sig_source_c(20e6, analog.GR_SIN_WAVE, freq, 1, 0)
 
 
 
@@ -136,8 +138,14 @@ class top_block(gr.top_block, Qt.QWidget):
         self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.band_pass_filter_0, 0), (self.uhd_usrp_sink_0, 0))
 
+
+        # close window timer
+        self.timer = Qt.QTimer(self)
+        self.timer.timeout.connect(self.close)
+        self.timer.start(1000*(30-0.8))
+
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
+        self.settings = Qt.QSettings("GNU Radio", "sinewave")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -164,8 +172,15 @@ class top_block(gr.top_block, Qt.QWidget):
         self.freq_usrp = freq_usrp
         self.uhd_usrp_sink_0.set_center_freq(self.freq_usrp, 0)
 
+    def get_freq(self):
+        return self.freq
 
-def main(top_block_cls=top_block, options=None):
+    def set_freq(self, freq):
+        self.freq = freq
+        self.analog_sig_source_x_0.set_frequency(self.freq)
+
+
+def main(top_block_cls=sinewave, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
