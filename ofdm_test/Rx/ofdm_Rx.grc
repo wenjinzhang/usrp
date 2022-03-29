@@ -284,7 +284,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>5e9</value>
+      <value>5.2e9</value>
     </param>
   </block>
   <block>
@@ -2475,6 +2475,10 @@
     <param>
       <key>hide_lo_controls</key>
       <value>True</value>
+    </param>
+    <param>
+      <key>start_time</key>
+      <value>-1</value>
     </param>
     <param>
       <key>stream_args</key>

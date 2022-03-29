@@ -4,7 +4,7 @@
 # arrange attack
 
 ##################################################
-from white_noise import white_noise
+from white_noise_usrp_nobandpass import white_noise_usrp_nobandpass
 if __name__ == '__main__':
     import ctypes
     import sys
@@ -33,7 +33,7 @@ import threading
 import time
 start_time = time.time()
 
-def main(top_block_cls=white_noise, options=None, gains=[ 0.5, 0.6, 0.7]):
+def main(top_block_cls=white_noise_usrp_nobandpass, options=None, gains=[0.5, 0.6, 0.7, 0.8]):
     global start_time
 
     from distutils.version import StrictVersion
@@ -48,22 +48,20 @@ def main(top_block_cls=white_noise, options=None, gains=[ 0.5, 0.6, 0.7]):
         if time.time()-start_time >= 29:
             break
         time.sleep(1)
-
-
     
     for gain in gains:
-            print("start attack, gain is", gain, 'time:', time.time()-start_time)
-            tb = top_block_cls(gain)
-            tb.start()
-            tb.show()
-            def quitting():
-                tb.stop()
-                tb.wait()
-            qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
-            # qapp.exec_()
-            qapp.exec_()
-     
+        print("start attack, gain is", gain, 'time:', time.time()-start_time)
+        tb = top_block_cls(gain)
+        tb.start()
+        tb.show()
+        def quitting():
+            tb.stop()
+            tb.wait()
+        qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
+        # qapp.exec_()
+        qapp.exec_()
+    
 
 if __name__ == '__main__':
-    # print(white_noise.gain)
+    # print(white_noise_usrp_nobandpass.gain)
     main()

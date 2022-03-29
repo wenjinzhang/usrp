@@ -63,12 +63,12 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 20e6
+        self.samp_rate = samp_rate = 5e6
         self.noise_amp = noise_amp = 1
         self.lowcut = lowcut = 1
-        self.highcut = highcut = 1e6
+        self.highcut = highcut = 0.3125e6
         self.gain = gain = 0.95
-        self.freq_usrp = freq_usrp = 5.24e9
+        self.freq_usrp = freq_usrp = 5.2e9
 
         ##################################################
         # Blocks
@@ -177,7 +177,7 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
         self.band_pass_filter_0 = filter.fir_filter_ccf(1, firdes.band_pass(
-        	1, samp_rate, lowcut, highcut, 1e6, firdes.WIN_HAMMING, 6.76))
+        	1, samp_rate, lowcut, highcut, 1e6, firdes.WIN_KAISER, 6.76))
         self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, noise_amp, 0)
 
 
@@ -204,7 +204,7 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
 
     def get_noise_amp(self):
         return self.noise_amp
@@ -218,14 +218,14 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
 
     def set_lowcut(self, lowcut):
         self.lowcut = lowcut
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
 
     def get_highcut(self):
         return self.highcut
 
     def set_highcut(self, highcut):
         self.highcut = highcut
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
 
     def get_gain(self):
         return self.gain

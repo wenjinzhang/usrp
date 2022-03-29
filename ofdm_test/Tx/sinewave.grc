@@ -101,7 +101,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(744, 52)</value>
+      <value>(568, 44)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(344, 28)</value>
+      <value>(344, 36)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -155,7 +155,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(464, 36)</value>
+      <value>(464, 44)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -167,7 +167,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0.95</value>
+      <value>0.75</value>
     </param>
   </block>
   <block>
@@ -201,7 +201,7 @@
     <key>analog_sig_source_x</key>
     <param>
       <key>amp</key>
-      <value>1</value>
+      <value>10</value>
     </param>
     <param>
       <key>alias</key>
@@ -253,90 +253,11 @@
     </param>
     <param>
       <key>samp_rate</key>
-      <value>20e6</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>waveform</key>
       <value>analog.GR_SIN_WAVE</value>
-    </param>
-  </block>
-  <block>
-    <key>band_pass_filter</key>
-    <param>
-      <key>beta</key>
-      <value>6.76</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>decim</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>fir_filter_ccf</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(352, 220)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>gain</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>high_cutoff_freq</key>
-      <value>1.5e6</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>band_pass_filter_0</value>
-    </param>
-    <param>
-      <key>interp</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>low_cutoff_freq</key>
-      <value>0.5e6</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>20e6</value>
-    </param>
-    <param>
-      <key>width</key>
-      <value>1e6</value>
-    </param>
-    <param>
-      <key>win</key>
-      <value>firdes.WIN_KAISER</value>
     </param>
   </block>
   <block>
@@ -379,7 +300,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>fftsize</key>
@@ -387,7 +308,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(608, 332)</value>
+      <value>(592, 332)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -419,7 +340,7 @@
     </param>
     <param>
       <key>label1</key>
-      <value>Tx Spectrum</value>
+      <value></value>
     </param>
     <param>
       <key>width1</key>
@@ -579,7 +500,7 @@
     </param>
     <param>
       <key>name</key>
-      <value>Tx Spectrum</value>
+      <value>""</value>
     </param>
     <param>
       <key>nconnections</key>
@@ -619,7 +540,7 @@
     </param>
     <param>
       <key>wintype</key>
-      <value>firdes.WIN_BLACKMAN_hARRIS</value>
+      <value>firdes.WIN_HAMMING</value>
     </param>
     <param>
       <key>label</key>
@@ -627,7 +548,7 @@
     </param>
     <param>
       <key>ymax</key>
-      <value>10</value>
+      <value>40</value>
     </param>
     <param>
       <key>ymin</key>
@@ -1310,7 +1231,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(608, 156)</value>
+      <value>(584, 156)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1467,18 +1388,12 @@
   </block>
   <connection>
     <source_block_id>analog_sig_source_x_0</source_block_id>
-    <sink_block_id>band_pass_filter_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>band_pass_filter_0</source_block_id>
     <sink_block_id>qtgui_freq_sink_x_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>band_pass_filter_0</source_block_id>
+    <source_block_id>analog_sig_source_x_0</source_block_id>
     <sink_block_id>uhd_usrp_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>

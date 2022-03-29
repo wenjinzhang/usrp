@@ -34,7 +34,7 @@ from gnuradio import qtgui
 
 class white_noise(gr.top_block, Qt.QWidget):
 
-    def __init__(self, setgain=0.95):
+    def __init__(self, setgain=0.75):
         gr.top_block.__init__(self, "White Noise")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("White Noise")
@@ -63,11 +63,11 @@ class white_noise(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 20e6
-        self.noise_amp = noise_amp = 1
+        self.noise_amp = noise_amp = 2
         self.lowcut = lowcut = 1
-        self.highcut = highcut = 2e6
+        self.highcut = highcut = 0.3125e6
         self.gain = gain = 0.95
-        self.freq_usrp = freq_usrp = 5.24e9
+        self.freq_usrp = freq_usrp = 5.2e9 + 0.3125e6 * 21
 
         self.gain = gain = setgain
         ##################################################
@@ -144,7 +144,7 @@ class white_noise(gr.top_block, Qt.QWidget):
         # close window timer
         self.timer = Qt.QTimer(self)
         self.timer.timeout.connect(self.close)
-        self.timer.start(1000*(60-0.8))
+        self.timer.start(1000*(20-0.5))
 
 
 

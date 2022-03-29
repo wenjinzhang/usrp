@@ -4,7 +4,7 @@
 # arrange attack
 
 ##################################################
-from white_noise import white_noise
+from white_noise_add_constant import white_noise_add_constant
 if __name__ == '__main__':
     import ctypes
     import sys
@@ -33,7 +33,7 @@ import threading
 import time
 start_time = time.time()
 
-def main(top_block_cls=white_noise, options=None, gains=[ 0.5, 0.6, 0.7]):
+def main(top_block_cls=white_noise_add_constant, options=None, gains=[ 0.5, 0.6, 0.7]):
     global start_time
 
     from distutils.version import StrictVersion
@@ -65,5 +65,5 @@ def main(top_block_cls=white_noise, options=None, gains=[ 0.5, 0.6, 0.7]):
      
 
 if __name__ == '__main__':
-    # print(white_noise.gain)
+    # print(white_noise_add_constant.gain)
     main()
