@@ -64,12 +64,12 @@ class white_noise_add_constant(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 20e6
-        self.noise_amp = noise_amp = 2
+        self.noise_amp = noise_amp = 1
         self.lowcut = lowcut = 1
         self.highcut = highcut = 0.3125e6
         self.gain = gain = 0.95
-        self.freq_usrp = freq_usrp = 5.2e9 + 0.3125e6 * 17
-        self.const = const = 1
+        self.freq_usrp = freq_usrp = 5.2e9 + 0.3125e6 * 1
+        self.const = const = 10
 
         self.gain = gain = setgain
         ##################################################
@@ -124,7 +124,7 @@ class white_noise_add_constant(gr.top_block, Qt.QWidget):
         # close window timer
         self.timer = Qt.QTimer(self)
         self.timer.timeout.connect(self.close)
-        self.timer.start(1000*(20-0.5))
+        self.timer.start(1000*(10020-0.5))
 
 
     def closeEvent(self, event):

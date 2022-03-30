@@ -67,7 +67,7 @@ class white_noise(gr.top_block, Qt.QWidget):
         self.lowcut = lowcut = 1
         self.highcut = highcut = 0.3125e6
         self.gain = gain = 0.95
-        self.freq_usrp = freq_usrp = 5.2e9 + 0.3125e6 * 21
+        self.freq_usrp = freq_usrp = 5.2e9 + 0.3125e6 * 1
 
         self.gain = gain = setgain
         ##################################################
@@ -144,7 +144,7 @@ class white_noise(gr.top_block, Qt.QWidget):
         # close window timer
         self.timer = Qt.QTimer(self)
         self.timer.timeout.connect(self.close)
-        self.timer.start(1000*(20-0.5))
+        self.timer.start(1000*(1000-0.5))
 
 
 
