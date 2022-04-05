@@ -7,7 +7,7 @@ usrp = uhd.usrp.MultiUSRP()
 duration = 120 # seconds
 center_freq = 5.2e9
 sample_rate = 20e6
-gain = 60 # [dB] start low then work your way up
+gain = 63 # [dB] start low then work your way up
 
 signal = generate_attack_signal({
     4: {'v': 1, 'm': 0},

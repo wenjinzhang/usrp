@@ -1,6 +1,6 @@
 from unittest import result
 import matplotlib.pyplot as plt
-from scipy.fft import fft, fftfreq
+# from scipy.fft import fft, fftfreq
 import numpy as np
 base_signal = np.load('./signal_set/base.npy')
 
@@ -12,22 +12,22 @@ subcarrier_map = {
 
 # 'v' is variance;  'm' is mean
 attack_configs = {
-    4: {'v': 1, 'm': 0},
-    5: {'v': 2, 'm': 0},
-    7: {'v': 3, 'm': 0},
-    10: {'v': 3, 'm': 0},
-    28: {'v': 5, 'm': 0},
+    1: {'v': 1, 'm': 0},
+    5: {'v': 1, 'm': 0},
+    7: {'v': 1, 'm': 0},
+    10: {'v': 1, 'm': 0},
+    28: {'v': 1, 'm': 0},
 }
 
 # check spec
-def plot_spec(y, sample_rate = 20e6):
-  yf = fft(y)
-  N = len(y)
-  xf = fftfreq(N, 1 / sample_rate)/1e6
-  plt.plot(xf, np.abs(yf))
-  plt.ylabel('Energy')
-  plt.xlabel('Frequency(MHz)')
-  plt.show()
+# def plot_spec(y, sample_rate = 20e6):
+#   yf = fft(y)
+#   N = len(y)
+#   xf = fftfreq(N, 1 / sample_rate)/1e6
+#   plt.plot(xf, np.abs(yf))
+#   plt.ylabel('Energy')
+#   plt.xlabel('Frequency(MHz)')
+#   plt.show()
 
 
 def generate_attack_signal(attack_configs):
@@ -47,10 +47,8 @@ def generate_attack_signal(attack_configs):
 
 if __name__=='__main__':
     result = generate_attack_signal({
-    4: {'v': 1, 'm': 0},
-    5: {'v': 2, 'm': 0},
-    7: {'v': 3, 'm': 0},
-    10: {'v': 3, 'm': 0},
-    27: {'v': 2, 'm': 0},
-})
-    plot_spec(result)
+    16: {'v': 0.5, 'm': 0},
+    
+    })
+    np.save('./data.npy', result)
+    # plot_spec(result)

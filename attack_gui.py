@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: White Noise Nofilter
+# Title: Attack Gui
 # GNU Radio version: 3.7.14.0
 ##################################################
 
@@ -17,27 +17,27 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
-from gnuradio import analog
+from gnuradio import blocks
 from gnuradio import eng_notation
-from gnuradio import filter
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import numpy as np
 import sip
 import sys
 import time
 from gnuradio import qtgui
 
 
-class white_noise_nofilter(gr.top_block, Qt.QWidget):
+class attack_gui(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "White Noise Nofilter")
+        gr.top_block.__init__(self, "Attack Gui")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("White Noise Nofilter")
+        self.setWindowTitle("Attack Gui")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -55,7 +55,7 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "white_noise_nofilter")
+        self.settings = Qt.QSettings("GNU Radio", "attack_gui")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
@@ -63,11 +63,9 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 20e6
-        self.noise_amp = noise_amp = 1
-        self.lowcut = lowcut = 1
-        self.highcut = highcut = 0.3125e6
-        self.gain = gain = 0.95
+        self.gain = gain = 0.75
         self.freq_usrp = freq_usrp = 5.2e9
+        self.data_rate = data_rate = 0.25
 
         ##################################################
         # Blocks
@@ -102,21 +100,20 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
 
 
 
-        self.band_pass_filter_0 = filter.fir_filter_ccf(1, firdes.band_pass(
-        	1, samp_rate, lowcut, highcut, 1e6, firdes.WIN_KAISER, 6.76))
-        self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, noise_amp, 0)
+        self.blocks_vector_source_x_0 = blocks.vector_source_c(np.load("/home/lab/usrp/data.npy"), True, 1, [])
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate*data_rate,True)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_noise_source_x_0, 0), (self.band_pass_filter_0, 0))
-        self.connect((self.band_pass_filter_0, 0), (self.qtgui_sink_x_0, 0))
-        self.connect((self.band_pass_filter_0, 0), (self.uhd_usrp_sink_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.qtgui_sink_x_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.uhd_usrp_sink_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "white_noise_nofilter")
+        self.settings = Qt.QSettings("GNU Radio", "attack_gui")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -127,28 +124,7 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
         self.qtgui_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
-
-    def get_noise_amp(self):
-        return self.noise_amp
-
-    def set_noise_amp(self, noise_amp):
-        self.noise_amp = noise_amp
-        self.analog_noise_source_x_0.set_amplitude(self.noise_amp)
-
-    def get_lowcut(self):
-        return self.lowcut
-
-    def set_lowcut(self, lowcut):
-        self.lowcut = lowcut
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
-
-    def get_highcut(self):
-        return self.highcut
-
-    def set_highcut(self, highcut):
-        self.highcut = highcut
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, self.lowcut, self.highcut, 1e6, firdes.WIN_KAISER, 6.76))
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate*self.data_rate)
 
     def get_gain(self):
         return self.gain
@@ -165,8 +141,15 @@ class white_noise_nofilter(gr.top_block, Qt.QWidget):
         self.freq_usrp = freq_usrp
         self.uhd_usrp_sink_0.set_center_freq(self.freq_usrp, 0)
 
+    def get_data_rate(self):
+        return self.data_rate
 
-def main(top_block_cls=white_noise_nofilter, options=None):
+    def set_data_rate(self, data_rate):
+        self.data_rate = data_rate
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate*self.data_rate)
+
+
+def main(top_block_cls=attack_gui, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
