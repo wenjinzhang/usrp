@@ -1,6 +1,6 @@
 from unittest import result
 import matplotlib.pyplot as plt
-# from scipy.fft import fft, fftfreq
+
 import numpy as np
 base_signal = np.load('./signal_set/base.npy')
 
@@ -20,14 +20,15 @@ attack_configs = {
 }
 
 # check spec
-# def plot_spec(y, sample_rate = 20e6):
-#   yf = fft(y)
-#   N = len(y)
-#   xf = fftfreq(N, 1 / sample_rate)/1e6
-#   plt.plot(xf, np.abs(yf))
-#   plt.ylabel('Energy')
-#   plt.xlabel('Frequency(MHz)')
-#   plt.show()
+def plot_spec(y, sample_rate = 20e6):
+  from scipy.fft import fft, fftfreq
+  yf = fft(y)
+  N = len(y)
+  xf = fftfreq(N, 1 / sample_rate)/1e6
+  plt.plot(xf, np.abs(yf))
+  plt.ylabel('Energy')
+  plt.xlabel('Frequency(MHz)')
+  plt.show()
 
 
 def generate_attack_signal(attack_configs):
@@ -51,4 +52,4 @@ if __name__=='__main__':
     
     })
     np.save('./data.npy', result)
-    # plot_spec(result)
+    plot_spec(result)
