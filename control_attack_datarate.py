@@ -53,7 +53,7 @@ def main(top_block_cls=attack_gui, options=None, gains=[ 0.5, 0.6, 0.7]):
     
     for gain in gains:
             print("start attack_gui, gain is", gain, 'time:', time.time()-start_time)
-            tb = top_block_cls(gain)
+            tb = top_block_cls(gain,0.75,1)
             tb.start()
             tb.show()
             def quitting():

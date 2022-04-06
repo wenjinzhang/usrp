@@ -63,7 +63,7 @@ class white_noise(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 20e6
-        self.noise_amp = noise_amp = 2
+        self.noise_amp = noise_amp = 1
         self.lowcut = lowcut = 1
         self.highcut = highcut = 0.3125e6
         self.gain = gain = 0.95

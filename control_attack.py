@@ -33,7 +33,7 @@ import threading
 import time
 start_time = time.time()
 
-def main(top_block_cls=attack, options=None, gains=[ 0.5, 0.6, 0.7]):
+def main(top_block_cls=attack, options=None, gains=[0.3, 0.4, 0.5]):
     global start_time
 
     from distutils.version import StrictVersion
@@ -49,8 +49,6 @@ def main(top_block_cls=attack, options=None, gains=[ 0.5, 0.6, 0.7]):
             break
         time.sleep(1)
 
-
-    
     for gain in gains:
             print("start attack, gain is", gain, 'time:', time.time()-start_time)
             tb = top_block_cls(gain)
