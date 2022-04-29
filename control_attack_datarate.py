@@ -33,7 +33,12 @@ import threading
 import time
 start_time = time.time()
 
-def main(top_block_cls=attack_gui, options=None, gains=[ 0.5, 0.6, 0.7]):
+gains = [0.5, 0.55, 0.6, 0.65, 0.70, 0.75, 0.8]
+data_rate = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ]
+variances = [0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6]
+
+
+def main(top_block_cls=attack_gui, options=None):
     global start_time
 
     from distutils.version import StrictVersion
@@ -45,15 +50,14 @@ def main(top_block_cls=attack_gui, options=None, gains=[ 0.5, 0.6, 0.7]):
     tb = top_block_cls(0)
     
     while True:
-        if time.time()-start_time >= 29:
+        if time.time()-start_time >= 10:
             break
         time.sleep(1)
 
-
     
-    for gain in gains:
-            print("start attack_gui, gain is", gain, 'time:', time.time()-start_time)
-            tb = top_block_cls(gain,0.75,1)
+    for i in range(3):
+            print('time:', time.time()-start_time)
+            tb = top_block_cls(setgain=gains[i], data_rate=1, var=0.5)
             tb.start()
             tb.show()
             def quitting():

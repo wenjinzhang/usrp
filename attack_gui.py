@@ -31,11 +31,10 @@ import sys
 import time
 from gnuradio import qtgui
 
-from signal_generator import generate_attack_signal
 
 class attack_gui(gr.top_block, Qt.QWidget):
 
-    def __init__(self, setgain=0.75, data_rate = 0.5, var = 1):
+    def __init__(self):
         gr.top_block.__init__(self, "Attack Gui")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Attack Gui")
@@ -66,10 +65,8 @@ class attack_gui(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate = 20e6
         self.gain = gain = 0.75
         self.freq_usrp = freq_usrp = 5.2e9
-        self.data_rate = data_rate
+        self.data_rate = data_rate = 0.25
 
-
-        self.gain = gain = setgain
         ##################################################
         # Blocks
         ##################################################
@@ -83,8 +80,6 @@ class attack_gui(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_center_freq(freq_usrp, 0)
         self.uhd_usrp_sink_0.set_normalized_gain(gain, 0)
-        print("current gain:", gain, "variance:", var)
-
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         self.qtgui_sink_x_0 = qtgui.sink_c(
         	1024, #fftsize
@@ -103,12 +98,11 @@ class attack_gui(gr.top_block, Qt.QWidget):
 
         self.qtgui_sink_x_0.enable_rf_freq(False)
 
-        signal = generate_attack_signal({
-            16: {'v': var, 'm': 0},
-        })
 
-        self.blocks_vector_source_x_0 = blocks.vector_source_c(signal, True, 1, [])
+
+        self.blocks_vector_source_x_0 = blocks.vector_source_c(np.load("/home/lab/usrp/data.npy"), True, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate*data_rate,True)
+
 
 
         ##################################################
@@ -117,12 +111,6 @@ class attack_gui(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_sink_x_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
-
-        # close window timer
-        self.timer = Qt.QTimer(self)
-        self.timer.timeout.connect(self.close)
-        self.timer.start(1000*(20-0.5))
-
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "attack_gui")

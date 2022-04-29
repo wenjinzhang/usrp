@@ -2,12 +2,15 @@ from unittest import result
 import matplotlib.pyplot as plt
 
 import numpy as np
-base_signal = np.load('./signal_set/base.npy')
+base_signal = np.load('./signal_set_52subcarriers/base.npy')
 
 subcarrier_map = {
-    1:-28,2:-26,3:-24,4:-22,5:-20,6:-18,7:-16,8:-14,9:-12,10:-10,
-    11:-8,12:-6,13:-4, 14:-2, 15:-1, 16:1,17:3, 18:5, 19:7,20:9,
-    21:11, 22:13, 23:15, 24:17,25:19,26:21,27:23,28:25,29:27,30:28,
+  1: -26, 2: -25, 3: -24, 4: -23, 5: -22, 6: -21, 7: -20, 8: -19, 9: -18, 10: -17, 
+  11: -16, 12: -15, 13: -14, 14: -13, 15: -12, 16: -11, 17: -10, 18: -9, 19: -8, 20: -7, 
+  21: -6, 22: -5, 23: -4, 24: -3, 25: -2, 26: -1, 27: 1, 28: 2, 29: 3, 30: 4, 
+  31: 5, 32: 6, 33: 7, 34: 8, 35: 9, 36: 10, 37: 11, 38: 12, 39: 13, 40: 14,
+  41: 15, 42: 16, 43: 17, 44: 18, 45: 19, 46: 20, 47: 21, 48: 22, 49: 23, 50: 24, 
+  51: 25, 52: 26
 }
 
 # 'v' is variance;  'm' is mean
@@ -36,7 +39,7 @@ def generate_attack_signal(attack_configs):
     for subidx in attack_configs:
         subcarrier_offset = subcarrier_map[subidx]
         config = attack_configs[subidx]
-        sine_wave = np.load('./signal_set/sine_{}.npy'.format(abs(subcarrier_offset)))
+        sine_wave = np.load('./signal_set_52subcarriers/sine_{}.npy'.format(abs(subcarrier_offset)))
         if subcarrier_offset > 0:
             result = result +  (config['v'] * base_signal + config['m']) * sine_wave 
         else:
@@ -48,13 +51,15 @@ def generate_attack_signal(attack_configs):
 
 if __name__=='__main__':
     result = generate_attack_signal({
+    1: {'v': 0.5, 'm': 0},
+    3: {'v': 0.5, 'm': 0},
     4: {'v': 0.5, 'm': 0},
     8: {'v': 0.5, 'm': 0},
-    12: {'v': 0.5, 'm': 0},
+    13: {'v': 0.5, 'm': 0},
     16: {'v': 0.5, 'm': 0},
-    20: {'v': 0.5, 'm': 0},
-    24: {'v': 0.5, 'm':0},
-    28: {'v': 0.5, 'm':0},
+    25: {'v': 0.5, 'm': 0},
+    30: {'v': 0.5, 'm':0},
+    52: {'v': 0.5, 'm':0},
     })
     np.save('./data.npy', result)
     # plot_spec(result)
